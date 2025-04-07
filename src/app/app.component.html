@@ -30,6 +30,15 @@
 
     <!-- ... existing header and summary cards -->
 
+    <div class="keywords-table">
+      <div class="table-header">
+        <div class="page-col">Page / Keyword</div>
+        <div class="metric-col">Impressions</div>
+        <div class="metric-col">Clicks</div>
+        <div class="metric-col">Position</div>
+      </div>
+    </div>
+
 <div id="pages-container" class="mt-3  rounded-lg overflow-hidden">
   <app-page-card 
     *ngFor="let page of currentTopPages; trackBy: trackByPage"

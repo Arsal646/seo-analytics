@@ -11,5 +11,22 @@ import { CommonModule } from '@angular/common';
 })
 export class KeywordRowComponent {
   @Input() query!: QueryData;
-  @Input() seoService!: SeoAnalyticsService;
+  @Input() isTopQuery?: boolean;
+  @Input() maxImpressions?: number = 99;
+  @Input() maxClicks?: number = 99;
+
+  getPercentageChange(current: number, previous: number): number {
+    if (previous === 0) return 0;
+    return ((current - previous) / previous) * 100;
+  }
+
+  getChangeClass(current: number, previous: number): string {
+    const change = current - previous;
+    return change > 0 ? 'up' : change < 0 ? 'down' : '';
+  }
+
+  getArrow(current: number, previous: number): string {
+    const change = current - previous;
+    return change > 0 ? '▲' : change < 0 ? '▼' : '→';
+  }
 }

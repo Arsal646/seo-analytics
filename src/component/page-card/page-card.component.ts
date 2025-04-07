@@ -6,30 +6,45 @@ import { KeywordRowComponent } from '../keyword-row/keyword-row.component';
 
 @Component({
   selector: 'app-page-card',
-  imports: [CommonModule,KeywordRowComponent],
+  imports: [CommonModule, KeywordRowComponent],
   templateUrl: './page-card.component.html',
   styleUrl: './page-card.component.scss'
 })
 export class PageCardComponent {
   @Input() page!: PageData;
   @Input() seoService!: SeoAnalyticsService;
-  isOpen = false;
+  isExpanded = false;
 
-  toggleDetails(): void {
-    this.isOpen = !this.isOpen;
+  toggleExpansion(): void {
+    this.isExpanded = !this.isExpanded;
   }
 
-  getAvgPosition(): string {
-    return (
-      this.page.queries.reduce((sum, q) => sum + q.position, 0) /
-      this.page.queries.length
-    ).toFixed(1);
+  getPercentageChange(current: number, previous: number): number {
+    if (previous === 0) return 0;
+    return ((current - previous) / previous) * 100;
   }
 
-  getPositionColor(): string {
-    const avgPosition = parseFloat(this.getAvgPosition());
-    return this.seoService.getPositionColor(avgPosition);
+  getChangeClass(current: number, previous: number, reverse = false): string {
+    const change = current - previous;
+    if (reverse) {
+      // For position - lower is better
+      return change < 0 ? 'up' : change > 0 ? 'down' : '';
+    }
+    // For other metrics - higher is better
+    return change > 0 ? 'up' : change < 0 ? 'down' : '';
+  }
+
+  getArrow(current: number, previous: number, reverse = false): string {
+    const change = current - previous;
+    if (reverse) {
+      // For position - lower is better
+      return change < 0 ? '▲' : change > 0 ? '▼' : '→';
+    }
+    // For other metrics - higher is better
+    return change > 0 ? '▲' : change < 0 ? '▼' : '→';
+  }
+
+  getvvv(page:any){
+    return page.queries.reduce((sum: any, q: { position: any; }) => sum + q.position, 0) / page.queries.length
   }
 }
-
-

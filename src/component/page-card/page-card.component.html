@@ -1,58 +1,59 @@
-<div class="mb-0">
-  <div 
-    class="parent-card bg-white p-3 cursor-pointer" 
-    [class.open]="isOpen"
-    (click)="toggleDetails()">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center min-w-0">
-        <svg class="w-4 h-4 mr-2 transition-transform" [class.rotate-180]="isOpen" viewBox="0 0 20 20" fill="currentColor">
+<div class="keywords-table" [class.expended]="isExpanded">
+  <!-- Main Page Row (acts as header) -->
+  <div class="table-header" (click)="toggleExpansion()">
+    <div class="page-col">
+      <div class="flex items-center">
+        <svg class="w-4 h-4 mr-2 transition-transform" [class.rotate-180]="isExpanded" 
+             viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd"
-              d="M5.23 7.21a.75.75 0 011.06 0L10 10.94l3.71-3.72a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.23 8.27a.75.75 0 010-1.06z"
-              clip-rule="evenodd" />
+                d="M5.23 7.21a.75.75 0 011.06 0L10 10.94l3.71-3.72a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.23 8.27a.75.75 0 010-1.06z"
+                clip-rule="evenodd" />
         </svg>
-        <div class="break-normal">
-          <span class="font-medium">{{seoService.formatUrl(page.page)}}</span>
-          <span *ngIf="page.isTopPerformer" class="ml-2 text-xs bg-green-100 text-green-800 px-1 rounded">Top</span>
-          <br>
-          <span class="text-xs text-gray-500">{{page.queries.length}} kw</span>
-        </div>
+        <div class="page-name">{{seoService.formatUrl(page.page)}}</div>
       </div>
-      <div class="flex space-x-4">
-        <div class="text-center w-14">
-          <p class="text-gray-500 text-xs metric-label">Imp</p>
-          <p class="text-xs font-bold" [class]="seoService.getImpressionsColor(page.impressions, page.maxImpressions!)">
-            {{page.impressions | number}}
-          </p>
-        </div>
-        <div class="text-center w-14">
-          <p class="text-gray-500 text-xs metric-label">Clk</p>
-          <p class="text-xs font-bold" [class]="seoService.getClicksColor(page.clicks, page.maxClicks!)">
-            {{page.clicks | number}}
-          </p>
-        </div>
-        <div class="text-center w-14">
-          <p class="text-gray-500 text-xs metric-label">Pos</p>
-          <p class="text-xs font-bold" [class]="getPositionColor()">
-            {{getAvgPosition()}}
-          </p>
-        </div>
+      <div class="prev-value">({{page.queries.length}} keywords)</div>
+    </div>
+    <div class="metric-col">
+      <div class="value">
+        {{page.impressions | number}}
+        <span *ngIf="page.maxImpressions" class="badge" 
+              [class.up]="getChangeClass(page.impressions, page.maxImpressions) === 'up'"
+              [class.down]="getChangeClass(page.impressions, page.maxImpressions) === 'down'">
+          {{getArrow(page.impressions, page.maxImpressions)}}
+          {{getPercentageChange(page.impressions, page.maxImpressions) | number:'1.0-0'}}%
+        </span>
+      </div>
+      <div *ngIf="page.maxImpressions" class="prev-value">
+        (Max: {{page.maxImpressions | number}})
+      </div>
+    </div>
+    <div class="metric-col">
+      <div class="value">
+        {{page.clicks | number}}
+        <span *ngIf="page.maxClicks" class="badge"
+              [class.up]="getChangeClass(page.clicks, page.maxClicks) === 'up'"
+              [class.down]="getChangeClass(page.clicks, page.maxClicks) === 'down'">
+          {{getArrow(page.clicks, page.maxClicks)}}
+          {{getPercentageChange(page.clicks, page.maxClicks) | number:'1.0-0'}}%
+        </span>
+      </div>
+      <div *ngIf="page.maxClicks" class="prev-value">
+        (Max: {{page.maxClicks | number}})
+      </div>
+    </div>
+    <div class="metric-col">
+      <div class="value">
+        {{11 | number:'1.1-1'}}
       </div>
     </div>
   </div>
 
-  <div class="child-container" [class.open]="isOpen">
-    <div class="keyword-row header">
-      <div>Keyword</div>
-      <div class="text-center">Imp</div>
-      <div class="text-center">Clk</div>
-      <div class="text-center">Pos</div>
-      <div class="text-center">CTR</div>
-    </div>
-    
+  <!-- Keyword Rows (shown when expanded) -->
+  <div *ngIf="isExpanded" class="keyword-rows-container">
     <app-keyword-row 
       *ngFor="let query of page.queries"
-      [query]="query">
+      [query]="query"
+      [isTopQuery]="query.isTopQuery">
     </app-keyword-row>
   </div>
 </div>
-

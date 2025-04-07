@@ -1,18 +1,41 @@
-<div class="keyword-row" >
-  <div class="flex items-center">
-    <span *ngIf="query.isTopQuery" class="mr-1 text-green-500">★</span>
-    <span>{{query.query}}</span>
+<div class="table-row" [class.top-performer-row]="isTopQuery">
+  <div class="page-col">
+    <div class="page-name">
+      <span *ngIf="isTopQuery" class="text-yellow-500 mr-1">★</span>
+      {{query.query}}
+    </div>
   </div>
-  <div class="text-center font-medium" [class]="query.impressionsColor">
-    {{query.impressions | number}}
+  <div class="metric-col">
+    <div class="value">
+      {{query.impressions | number}}
+      <span *ngIf="maxImpressions" class="badge" 
+            [class.up]="getChangeClass(query.impressions, maxImpressions) === 'up'"
+            [class.down]="getChangeClass(query.impressions, maxImpressions) === 'down'">
+        {{getArrow(query.impressions, maxImpressions)}}
+        {{getPercentageChange(query.impressions, maxImpressions) | number:'1.0-0'}}%
+      </span>
+    </div>
+    <div *ngIf="maxImpressions" class="prev-value">
+      (Max: {{maxImpressions | number}})
+    </div>
   </div>
-  <div class="text-center font-medium" [class]="query.clicksColor">
-    {{query.clicks | number}}
+  <div class="metric-col">
+    <div class="value">
+      {{query.clicks | number}}
+      <span *ngIf="maxClicks" class="badge"
+            [class.up]="getChangeClass(query.clicks, maxClicks) === 'up'"
+            [class.down]="getChangeClass(query.clicks, maxClicks) === 'down'">
+        {{getArrow(query.clicks, maxClicks)}}
+        {{getPercentageChange(query.clicks, maxClicks) | number:'1.0-0'}}%
+      </span>
+    </div>
+    <div *ngIf="maxClicks" class="prev-value">
+      (Max: {{maxClicks | number}})
+    </div>
   </div>
-  <div class="text-center font-medium" [class]="query.positionColor">
-    {{query.position | number:'1.1-1'}}
-  </div>
-  <div class="text-center font-medium" [class]="query.ctrColor">
-    {{(query.ctr * 100) | number:'1.1-1'}}%
+  <div class="metric-col">
+    <div class="value">
+      {{query.position | number:'1.1-1'}}
+    </div>
   </div>
 </div>
