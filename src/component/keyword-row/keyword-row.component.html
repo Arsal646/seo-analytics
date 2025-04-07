@@ -1,0 +1,18 @@
+<div class="keyword-row" >
+  <div class="flex items-center">
+    <span *ngIf="query.isTopQuery" class="mr-1 text-green-500">★</span>
+    <span>{{query.query}}</span>
+  </div>
+  <div class="text-center font-medium" [class]="query.impressionsColor">
+    {{query.impressions | number}}
+  </div>
+  <div class="text-center font-medium" [class]="query.clicksColor">
+    {{query.clicks | number}}
+  </div>
+  <div class="text-center font-medium" [class]="query.positionColor">
+    {{query.position | number:'1.1-1'}}
+  </div>
+  <div class="text-center font-medium" [class]="query.ctrColor">
+    {{(query.ctr * 100) | number:'1.1-1'}}%
+  </div>
+</div>
