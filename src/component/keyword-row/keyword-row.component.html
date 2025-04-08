@@ -1,41 +1,32 @@
-<div class="table-row" [class.top-performer-row]="isTopQuery">
-  <div class="page-col">
-    <div class="page-name">
-      <span *ngIf="isTopQuery" class="text-yellow-500 mr-1">★</span>
-      {{query.query}}
-    </div>
+<div class="keyword-table">
+  <div class="table-header">
+      <div class="query-col">Keyword</div>
+      <div class="metric-col">Impressions</div>
+      <div class="metric-col">Clicks</div>
+      <div class="metric-col">Position</div>
   </div>
-  <div class="metric-col">
-    <div class="value">
-      {{query.impressions | number}}
-      <span *ngIf="maxImpressions" class="badge" 
-            [class.up]="getChangeClass(query.impressions, maxImpressions) === 'up'"
-            [class.down]="getChangeClass(query.impressions, maxImpressions) === 'down'">
-        {{getArrow(query.impressions, maxImpressions)}}
-        {{getPercentageChange(query.impressions, maxImpressions) | number:'1.0-0'}}%
-      </span>
-    </div>
-    <div *ngIf="maxImpressions" class="prev-value">
-      (Max: {{maxImpressions | number}})
-    </div>
-  </div>
-  <div class="metric-col">
-    <div class="value">
-      {{query.clicks | number}}
-      <span *ngIf="maxClicks" class="badge"
-            [class.up]="getChangeClass(query.clicks, maxClicks) === 'up'"
-            [class.down]="getChangeClass(query.clicks, maxClicks) === 'down'">
-        {{getArrow(query.clicks, maxClicks)}}
-        {{getPercentageChange(query.clicks, maxClicks) | number:'1.0-0'}}%
-      </span>
-    </div>
-    <div *ngIf="maxClicks" class="prev-value">
-      (Max: {{maxClicks | number}})
-    </div>
-  </div>
-  <div class="metric-col">
-    <div class="value">
-      {{query.position | number:'1.1-1'}}
-    </div>
+
+  <div class="table-row" *ngFor="let query of queries">
+      <div class="query-col">
+          <div class="query-name">{{query.query}}</div>
+      </div>
+      
+      <div class="metric-col">
+          <div class="value">
+              {{query.impressions}}
+              <span *ngIf="query.impressionsChange" 
+                    class="badge" 
+                    [ngClass]="{
+                      'up': query.impressionsChange.includes('+'), 
+                      'down': query.impressionsChange.includes('-')
+                    }">
+                  {{query.impressionsChange.includes('+') ? '▲' : '▼'}} 
+                  {{query.impressionsChange.replace('+', '').replace('-', '')}}
+              </span>
+          </div>
+          <div class="prev-value" *ngIf="query.previous">(Previous: {{query.previous.impressions}})</div>
+      </div>
+      
+      <!-- Repeat for clicks and position -->
   </div>
 </div>

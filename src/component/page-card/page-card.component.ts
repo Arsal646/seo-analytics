@@ -2,11 +2,9 @@ import { Component, Input } from '@angular/core';
 import { SeoAnalyticsService } from '../../services/seo-analytics.service';
 import { PageData } from '../../models/seo-model';
 import { CommonModule } from '@angular/common';
-import { KeywordRowComponent } from '../keyword-row/keyword-row.component';
-
 @Component({
   selector: 'app-page-card',
-  imports: [CommonModule, KeywordRowComponent],
+  imports: [CommonModule],
   templateUrl: './page-card.component.html',
   styleUrl: './page-card.component.scss'
 })
@@ -14,6 +12,13 @@ export class PageCardComponent {
   @Input() page!: PageData;
   @Input() seoService!: SeoAnalyticsService;
   isExpanded = false;
+
+  constructor(){
+    setTimeout(() => {
+      console.log('page',this.page);
+      
+    }, 400);
+  }
 
   toggleExpansion(): void {
     this.isExpanded = !this.isExpanded;

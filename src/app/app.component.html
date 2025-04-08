@@ -1,7 +1,7 @@
 <div class="bg-gray-100 p-2 text-xs sm:text-sm bg-grey-100">
   <div class="max-w-6xl mx-auto">
     <app-header (dateRangeChanged)="onDateRangeChange($event)"></app-header>
-    
+
     <div *ngIf="loading" class="p-4 text-center">
       <p>Loading data...</p>
     </div>
@@ -22,7 +22,7 @@
       <span *ngIf="totals.current.clicks === totals.previous.clicks">
         Maintained
       </span>
-      your total clicks by 
+      your total clicks by
       {{ ((totals.current.clicks - totals.previous.clicks) / totals.previous.clicks * 100).toFixed(1) }}%
       this period.
     </p>
@@ -30,68 +30,33 @@
 
     <!-- ... existing header and summary cards -->
 
-    <div class="keywords-table">
+    <!-- <div class="keywords-table">
       <div class="table-header">
         <div class="page-col">Page / Keyword</div>
         <div class="metric-col">Impressions</div>
         <div class="metric-col">Clicks</div>
         <div class="metric-col">Position</div>
       </div>
+    </div> -->
+
+    <!-- <div id="pages-container" class="mt-3  rounded-lg overflow-hidden">
+      <app-page-card *ngFor="let page of currentPages; trackBy: trackByPage" [page]="page" [seoService]="seoService">
+      </app-page-card>
+    </div> -->
+
+
+
+
+    <div id="pages-container" class="mt-3  rounded-lg overflow-hidden">
+      <app-page-metrics [pages]="pages" />
     </div>
 
-<div id="pages-container" class="mt-3  rounded-lg overflow-hidden">
-  <app-page-card 
-    *ngFor="let page of currentTopPages; trackBy: trackByPage"
-    [page]="page"
-    [seoService]="seoService">
-  </app-page-card>
-</div>
 
-<!-- Add color legend section -->
-<div class="mt-4 text-xs text-gray-500">
-  <p class="font-medium">Color Legend:</p>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-1">
-    <!-- Position colors -->
-    <div class="flex items-center">
-      <div class="w-3 h-3 rounded-full bg-green-600 mr-1"></div>
-      <span>Position 1-3</span>
-    </div>
-    <div class="flex items-center">
-      <div class="w-3 h-3 rounded-full bg-lime-500 mr-1"></div>
-      <span>Position 4-10</span>
-    </div>
-    <div class="flex items-center">
-      <div class="w-3 h-3 rounded-full bg-yellow-500 mr-1"></div>
-      <span>Position 11-20</span>
-    </div>
-    <div class="flex items-center">
-      <div class="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-      <span>Position 21+</span>
-    </div>
-    <!-- CTR colors -->
-    <div class="flex items-center">
-      <div class="w-3 h-3 rounded-full bg-green-600 mr-1"></div>
-      <span>CTR > 10%</span>
-    </div>
-    <div class="flex items-center">
-      <div class="w-3 h-3 rounded-full bg-lime-500 mr-1"></div>
-      <span>CTR 5-10%</span>
-    </div>
-    <div class="flex items-center">
-      <div class="w-3 h-3 rounded-full bg-yellow-500 mr-1"></div>
-      <span>CTR 2-5%</span>
-    </div>
-    <div class="flex items-center">
-      <div class="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-      <span>CTR < 2%</span>
-    </div>
+
+
   </div>
 </div>
 
-    
 
-  </div>
-  </div>
-
-
-  <footer class="bg-gray-100 text-gray-400 mt-5 text-sm text-center py-4 h-40 flex justify-center items-center">© 2025 seo rank tracker. All rights reserved.</footer>
+<footer class="bg-gray-100 text-gray-400 mt-5 text-sm text-center py-4 h-40 flex justify-center items-center">© 2025 seo
+  rank tracker. All rights reserved.</footer>

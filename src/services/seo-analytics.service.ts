@@ -214,43 +214,43 @@ export class SeoAnalyticsService {
     return formatted || '/ (Homepage)';
   }
 
-  formatChange(current: number, previous: number, isPercentage = false, reverse = false): string {
-    const diff = current - previous;
-    let arrow = '→';
-    let colorClass = 'text-gray-500';
+//   formatChange(current: number, previous: number, isPercentage = false, reverse = false): string {
+//     const diff = current - previous;
+//     let arrow = '→';
+//     let colorClass = 'text-gray-500';
 
-    if (reverse) {
-      if (diff < 0) {
-        arrow = '↑';
-        colorClass = 'text-green-600'; // improved (lower value is better)
-      } else if (diff > 0) {
-        arrow = '↓';
-        colorClass = 'text-red-600'; // worse
-      }
-    } else {
-      if (diff > 0) {
-        arrow = '↑';
-        colorClass = 'text-green-600'; // improved
-      } else if (diff < 0) {
-        arrow = '↓';
-        colorClass = 'text-red-600'; // worse
-      }
-    }
+//     if (reverse) {
+//       if (diff < 0) {
+//         arrow = '↑';
+//         colorClass = 'text-green-600'; // improved (lower value is better)
+//       } else if (diff > 0) {
+//         arrow = '↓';
+//         colorClass = 'text-red-600'; // worse
+//       }
+//     } else {
+//       if (diff > 0) {
+//         arrow = '↑';
+//         colorClass = 'text-green-600'; // improved
+//       } else if (diff < 0) {
+//         arrow = '↓';
+//         colorClass = 'text-red-600'; // worse
+//       }
+//     }
 
-    const currentFormatted = isPercentage
-      ? parseFloat(current.toString()).toFixed(1) + '%'
-      : current.toLocaleString();
+//     const currentFormatted = isPercentage
+//       ? parseFloat(current.toString()).toFixed(1) + '%'
+//       : current.toLocaleString();
 
-    const prevFormatted = isPercentage
-      ? parseFloat(previous.toString()).toFixed(1) + '%'
-      : previous.toLocaleString();
+//     const prevFormatted = isPercentage
+//       ? parseFloat(previous.toString()).toFixed(1) + '%'
+//       : previous.toLocaleString();
 
-    return `
-<span class="${colorClass}">${arrow}</span> 
-${currentFormatted} 
-<span class="text-xs text-gray-500">( prev: ${prevFormatted})</span>
-`;
-  }
+//     return `
+// <span class="${colorClass}">${arrow}</span> 
+// ${currentFormatted} 
+// <span class="text-xs text-gray-500">( prev: ${prevFormatted})</span>
+// `;
+//   }
 
   formatTrend(current: number, previous: number, reverse = false): string {
     const diff = current - previous;
@@ -262,4 +262,184 @@ ${currentFormatted}
       : (diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-gray-500');
     return `<span class="${colorClass}">${arrow}</span> <span class="text-xs text-gray-500">(${previous.toLocaleString()})</span>`;
   }
+
+
+  calculateChange(current, previous, isLowerBetter = false) {
+    // Handle edge cases
+    if ((previous === 0 && current === 0) || previous === null || current === null) return 0;
+    if (previous === 0 || current === 0) return 100;
+  
+    // Standard ratio logic
+    let ratio = current / previous;
+  
+    // Calculate symmetrical percent change (always 100% when doubled or halved)
+    let change = Math.abs(100 * (Math.max(ratio, 1 / ratio) - 1));
+  
+    // Determine direction (positive or negative)
+    const isIncrease = ratio > 1;
+  
+    // Flip logic if lower is better (e.g. position)
+    if ((isIncrease && !isLowerBetter) || (!isIncrease && isLowerBetter)) {
+      return parseFloat(change.toFixed(2));
+    } else {
+      return parseFloat((-change).toFixed(2));
+    }
+  }
+  
+  
+  
+  formatChange(change) {
+    if (change === null) return null;
+    return change > 0 ? `+${change}%` : `${change}%`;
+  }
+  
+  transformAnalyticsData(currentData, previousData) {
+    // 1. Organize previous data
+    const previousDataMap = {};
+    
+    previousData.forEach(prevItem => {
+      if (!previousDataMap[prevItem.page]) {
+        previousDataMap[prevItem.page] = {};
+      }
+      
+      previousDataMap[prevItem.page][prevItem.query] = {
+        page: prevItem.page,
+        query: prevItem.query,
+        clicks: prevItem.clicks,
+        impressions: prevItem.impressions,
+        ctr: parseFloat((prevItem.ctr * 100).toFixed(2)),
+        position: parseFloat(prevItem.position.toFixed(2))
+      };
+    });
+  
+    // 2. Process current data
+    const result = [];
+    const currentPages = {};
+    
+    currentData.forEach(currentItem => {
+      const pageUrl = currentItem.page;
+      
+      if (!currentPages[pageUrl]) {
+        currentPages[pageUrl] = {
+          queries: [],
+          totalClicks: 0,
+          totalImpressions: 0,
+          positionSum: 0,
+          positionCount: 0
+        };
+      }
+      
+      // Update page totals
+      currentPages[pageUrl].totalClicks += currentItem.clicks;
+      currentPages[pageUrl].totalImpressions += currentItem.impressions;
+      currentPages[pageUrl].positionSum += currentItem.position;
+      currentPages[pageUrl].positionCount++;
+      
+      // Find matching previous query data
+      const prevQueryData = previousDataMap[pageUrl]?.[currentItem.query] || null;
+      
+      // Calculate changes for query
+      const clicksChange = this.calculateChange(currentItem.clicks, prevQueryData?.clicks);
+      const impressionsChange = this.calculateChange(currentItem.impressions, prevQueryData?.impressions);
+      const ctrChange = this.calculateChange(
+        parseFloat((currentItem.ctr * 100).toFixed(2)), 
+        prevQueryData?.ctr
+      );
+      const positionChange = this.calculateChange(
+        parseFloat(currentItem.position.toFixed(2)), 
+        prevQueryData?.position,
+        true // Position is lower=better
+      );
+      
+      // Create query entry with changes
+      const queryEntry = {
+        query: currentItem.query,
+        page: pageUrl,
+        clicks: currentItem.clicks,
+        clicksChange: this.formatChange(clicksChange),
+        impressions: currentItem.impressions,
+        impressionsChange: this.formatChange(impressionsChange),
+        ctr: parseFloat((currentItem.ctr * 100).toFixed(2)),
+        ctrChange: this.formatChange(ctrChange),
+        position: parseFloat(currentItem.position.toFixed(2)),
+        positionChange: this.formatChange(positionChange),
+        previous: prevQueryData
+      };
+      
+      currentPages[pageUrl].queries.push(queryEntry);
+    });
+  
+    // 3. Calculate page-level previous data
+    const previousPageStats = {};
+    
+    previousData.forEach(prevItem => {
+      if (!previousPageStats[prevItem.page]) {
+        previousPageStats[prevItem.page] = {
+          clicks: 0,
+          impressions: 0,
+          positionSum: 0,
+          positionCount: 0
+        };
+      }
+      
+      previousPageStats[prevItem.page].clicks += prevItem.clicks;
+      previousPageStats[prevItem.page].impressions += prevItem.impressions;
+      previousPageStats[prevItem.page].positionSum += prevItem.position;
+      previousPageStats[prevItem.page].positionCount++;
+    });
+  
+    // 4. Build final result with changes
+    for (const pageUrl in currentPages) {
+      const pageData = currentPages[pageUrl];
+      const prevPageData = previousPageStats[pageUrl] || {
+        clicks: 0,
+        impressions: 0,
+        positionSum: 0,
+        positionCount: 0
+      };
+      
+      // Calculate current averages
+      const currentAvgPosition = pageData.positionCount > 0 
+        ? pageData.positionSum / pageData.positionCount 
+        : 0;
+      
+      // Calculate previous averages
+      const prevAvgPosition = prevPageData.positionCount > 0
+        ? prevPageData.positionSum / prevPageData.positionCount
+        : 0;
+      
+      // Calculate page-level changes
+      const clicksChange = this.calculateChange(pageData.totalClicks, prevPageData.clicks);
+      const impressionsChange = this.calculateChange(pageData.totalImpressions, prevPageData.impressions);
+      const positionChange = this.calculateChange(
+        parseFloat(currentAvgPosition.toFixed(2)), 
+        parseFloat(prevAvgPosition.toFixed(2)),
+        true // Position is lower=better
+      );
+      
+      // Create page entry with changes
+      result.push({
+        page: pageUrl,
+        impressions: pageData.totalImpressions,
+        impressionsChange: this.formatChange(impressionsChange),
+        clicks: pageData.totalClicks,
+        clicksChange: this.formatChange(clicksChange),
+        position: parseFloat(currentAvgPosition.toFixed(2)),
+        positionChange: this.formatChange(positionChange),
+        previous: {
+          page: pageUrl,
+          impressions: prevPageData.impressions,
+          clicks: prevPageData.clicks,
+          position: parseFloat(prevAvgPosition.toFixed(2)),
+          queries: previousDataMap[pageUrl] 
+            ? Object.values(previousDataMap[pageUrl]) 
+            : []
+        },
+        queries: pageData.queries
+      });
+    }
+  
+    return result;
+  }
+  
 }

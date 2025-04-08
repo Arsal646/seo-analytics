@@ -1,0 +1,26 @@
+.custom-title {
+    font-size: 14px;
+  }
+  
+  .custom-value {
+    font-size: 14px;
+  }
+  
+  .custom-prev {
+    font-size: 12px;
+  }
+  
+  @media (min-width: 768px) {
+    .custom-title {
+      font-size: 18px;
+    }
+  
+    .custom-value {
+      font-size: 18px;
+    }
+  
+    .custom-prev {
+      font-size: 14px;
+    }
+  }
+  

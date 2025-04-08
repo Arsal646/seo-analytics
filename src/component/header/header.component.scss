@@ -1,0 +1,74 @@
+:root {
+    --base-font-size: 14px;
+    --title-font-size: 18px;
+    --select-padding: 0.25rem;
+  }
+  
+  @media (min-width: 768px) {
+    :root {
+      --base-font-size: 16px;
+      --title-font-size: 20px;
+      --select-padding: 0.35rem;
+    }
+  }
+  
+  .custom-select {
+    font-size: var(--base-font-size);
+    padding: var(--select-padding);
+  }
+
+
+  /* Base styles (mobile-first) */
+.custom-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    top: 0;
+    background: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 14px; /* Default font size */
+  }
+  
+  .custom-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .custom-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .custom-select {
+    border: 1px solid #e2e8f0;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 14px;
+  }
+  
+  /* Medium screens (md breakpoint ~768px) */
+  @media (min-width: 768px) {
+    .custom-container {
+      flex-direction: row;
+      font-size: 16px;
+    }
+  
+    .custom-title {
+      font-size: 20px;
+      margin-bottom: 0;
+    }
+  
+    .custom-controls {
+      margin-top: 0;
+    }
+  
+    .custom-select {
+      font-size: 15px;
+      padding: 0.35rem;
+    }
+  }
