@@ -100,8 +100,6 @@ export class AppComponent {
   }
 
   onDateRangeChange(range:string): void {
-    console.log(range);
-    
     this.dateRange = range
     this.loadData();
   }
@@ -127,7 +125,7 @@ export class AppComponent {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Error loading data. Please check console for details.';
+        this.error = 'Error loading data. Please check with admin.';
         console.error('Error loading data:', err);
         this.loading = false;
       }

@@ -7,7 +7,8 @@
         <div class="col-metric">Position</div>
     </div>
 
-    <!-- Table Rows -->
+    @if(pages && pages.length){
+           <!-- Table Rows -->
     <div *ngFor="let page of pages" class="page-group" [class.expanded]="expandedPage === page.page">
         <!-- Parent Row -->
         <div class="parent-row" (click)="togglePageExpansion(page.page)" [class.active]="expandedPage === page.page">
@@ -105,4 +106,14 @@
             </div>
         </div>
     </div>
+    }@else {
+        <div class="h-120">
+            <div class="p-4 text-center">
+                <p>Loading data...</p>
+              </div>
+        </div>
+
+    }
+
+
 </div>
