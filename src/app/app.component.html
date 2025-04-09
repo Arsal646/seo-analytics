@@ -1,5 +1,5 @@
-<div class="bg-gray-100 p-2 text-xs sm:text-sm bg-grey-100">
-  <div class="max-w-6xl mx-auto">
+<div class="bg-gray-100 p-2 text-xs sm:text-sm">
+  <div class="max-w-6xl mx-auto bg-white p-2 ">
     <app-header (dateRangeChanged)="onDateRangeChange($event)"></app-header>
 
     <div *ngIf="loading" class="p-4 text-center">
@@ -12,7 +12,7 @@
 
     <app-summary-card *ngIf="totals && !loading" [totals]="totals"></app-summary-card>
 
-    <p *ngIf="totals && !loading" class="mt-1 text-gray-600 text-center">
+    <!-- <p *ngIf="totals && !loading" class="mt-1 text-gray-600 text-center">
       <span *ngIf="totals.current.clicks > totals.previous.clicks" class="text-green-600 font-semibold">
         Increased
       </span>
@@ -25,7 +25,7 @@
       your total clicks by
       {{ ((totals.current.clicks - totals.previous.clicks) / totals.previous.clicks * 100).toFixed(1) }}%
       this period.
-    </p>
+    </p> -->
 
 
     <!-- ... existing header and summary cards -->
@@ -47,7 +47,7 @@
 
 
 
-    <div id="pages-container" class="mt-3  rounded-lg overflow-hidden">
+    <div id="pages-container" class="  rounded-lg overflow-hidden">
       <app-page-metrics [pages]="pages" />
     </div>
 

@@ -19,7 +19,6 @@
           "options": {
             "outputPath": "dist/seo-analytics",
             "index": "src/index.html",
-            "baseHref": "/seo-analytics/",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -96,14 +95,11 @@
             ],
             "scripts": []
           }
-        },
-        "deploy": {
-          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": "84b1a75b-eacf-43e1-b0b6-cfe1d15ef28f"
   }
 }

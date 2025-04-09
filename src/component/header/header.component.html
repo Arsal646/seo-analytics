@@ -1,4 +1,4 @@
-<div class="custom-container">
+<!-- <div class="custom-container">
   <h2 class="custom-title">{{title}}</h2>
   <div class="custom-controls">
     <select [(ngModel)]="dateRange" (change)="onDateRangeChange()" class="custom-select">
@@ -11,5 +11,23 @@
         {{category}}
       </option>
     </select>
+  </div>
+</div> -->
+
+<div class="flex flex-col md:flex-row justify-between items-center mb-3">
+  <h2 class="text-lg font-semibold">SEO Analytics</h2>
+  <div class="flex space-x-2 mt-2 md:mt-0">
+      <select [(ngModel)]="dateRange" (change)="onDateRangeChange()" class="border p-1 rounded text-xs">
+          <option value="today">Today</option>
+          <option>Last Week</option>
+          <option>Last Month</option>
+      </select>
+      <select class="border p-1 rounded text-xs">
+          <option>All</option>
+          <option>China Blog</option>
+          <option>Dubai Blog</option>
+          <option>India Blog</option>
+          <option>Pakistan Blog</option>
+      </select>
   </div>
 </div>

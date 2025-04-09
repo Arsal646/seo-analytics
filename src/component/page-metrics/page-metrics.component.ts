@@ -1,9 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-page-metrics',
-  imports: [CommonModule],
+  imports: [CommonModule,TableModule, ButtonModule],
   templateUrl: './page-metrics.component.html',
   styleUrl: './page-metrics.component.scss'
 })
@@ -35,6 +37,26 @@ export class PageMetricsComponent {
 
 togglePageExpansion(pageUrl: string): void {
   this.expandedPage = this.expandedPage === pageUrl ? null : pageUrl;
+}
+
+
+getQueryStatus(query: any): string {
+  // Implement your logic to determine status text
+  if (query.clicksChange?.includes('+')) return 'Growing';
+  if (query.clicksChange?.includes('-')) return 'Declining';
+  return 'Stable';
+}
+
+getQuerySeverity(query: any): string {
+  // Implement your logic to determine severity
+  if (query.clicksChange?.includes('+')) return 'success';
+  if (query.clicksChange?.includes('-')) return 'danger';
+  return 'info';
+}
+
+calculatePageTotal(page: any, metric: string): number {
+  // Implement your total calculation logic if needed
+  return page.queries.reduce((sum, query) => sum + query[metric], 0);
 }
 
 }

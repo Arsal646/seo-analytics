@@ -5,6 +5,7 @@ import { SummaryCardsComponent } from '../component/summary-card/summary-card.co
 import { SeoAnalyticsService } from '../services/seo-analytics.service';
 import { CommonModule } from '@angular/common';
 import { PageMetricsComponent } from "../component/page-metrics/page-metrics.component";
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,60 +14,76 @@ import { PageMetricsComponent } from "../component/page-metrics/page-metrics.com
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  current = {
-    "status": "success",
-    "data": [
-      {
-        "query": "alliance shipping",
-        "page": "https://theallianceshipping.com/",
-        "clicks": 5,
-        "impressions": 14,
-        "ctr": 21.43,
-        "position": 3.1
-      },
-      {
-        "query": "the alliance shipping",
-        "page": "https://theallianceshipping.com/service",
-        "clicks": 2,
-        "impressions": 8,
-        "ctr": 25,
-        "position": 3.5
-      }
-    ],
-    "meta": {
-      "start_date": "2025-04-04",
-      "end_date": "2025-04-04",
-      "count": 10
-    }
-  }
+  // current = {
+  //   "status": "success",
+  //   "data": [
+  //     {
+  //       "query": "alliance shipping",
+  //       "page": "https://theallianceshipping.com/",
+  //       "clicks": 5,
+  //       "impressions": 14,
+  //       "ctr": 21.43,
+  //       "position": 3.1
+  //     },
+  //     {
+  //       "query": "the alliance shipping",
+  //       "page": "https://theallianceshipping.com/service",
+  //       "clicks": 2,
+  //       "impressions": 8,
+  //       "ctr": 25,
+  //       "position": 3.5
+  //     },
+  //     {
+  //       "query": "the alliance shipping llllll",
+  //       "page": "https://theallianceshipping.com/service",
+  //       "clicks": 2,
+  //       "impressions": 8,
+  //       "ctr": 25,
+  //       "position": 3.5
+  //     }
+  //   ],
+  //   "meta": {
+  //     "start_date": "2025-04-04",
+  //     "end_date": "2025-04-04",
+  //     "count": 10
+  //   }
+  // }
 
-  pre = {
-    "status": "success",
-    "data": [
-      {
-        "query": "alliance shipping",
-        "page": "https://theallianceshipping.com/",
-        "clicks": 10,
-        "impressions": 15,
-        "ctr": 46.67,
-        "position": 3.3
-      },
-      {
-        "query": "the alliance shipping",
-        "page": "https://theallianceshipping.com/service",
-        "clicks": 2,
-        "impressions": 8,
-        "ctr": 25,
-        "position": 2.4
-      }
+  // pre = {
+  //   "status": "success",
+  //   "data": [
+  //     {
+  //       "query": "alliance shipping",
+  //       "page": "https://theallianceshipping.com/",
+  //       "clicks": 10,
+  //       "impressions": 15,
+  //       "ctr": 46.67,
+  //       "position": 3.3
+  //     },
+  //     {
+  //       "query": "the alliance shipping",
+  //       "page": "https://theallianceshipping.com/service",
+  //       "clicks": 2,
+  //       "impressions": 8,
+  //       "ctr": 25,
+  //       "position": 2.4
+  //     },
+  //     {
+  //       "query": "the alliance shipping llll",
+  //       "page": "https://theallianceshipping.com/service",
+  //       "clicks": 2,
+  //       "impressions": 8,
+  //       "ctr": 25,
+  //       "position": 2.4
+  //     }
       
-    ],
-    "meta": {
-      "start_date": "2025-04-03",
-      "end_date": "2025-04-03",
-      "count": 10
-    }
-  }
+  //   ],
+  //   "meta": {
+  //     "start_date": "2025-04-03",
+  //     "end_date": "2025-04-03",
+  //     "count": 10
+  //   }
+  // }
   totals: { current: Totals, previous: Totals } | null = null;
   title = 'SEO Analytics';
   dateRange = 'today';
@@ -82,7 +99,10 @@ export class AppComponent {
     this.loadData();
   }
 
-  onDateRangeChange(e:any): void {
+  onDateRangeChange(range:string): void {
+    console.log(range);
+    
+    this.dateRange = range
     this.loadData();
   }
 
@@ -92,34 +112,37 @@ export class AppComponent {
     
     const { current, previous } = this.seoService.getDateRange(this.dateRange);
 
-    // forkJoin([
-    //   this.seoService.fetchData(current.start, current.end),
-    //   this.seoService.fetchData(previous.start, previous.end)
-    // ]).subscribe({
-    //   next: ([currentData, previousData]) => {
-    //     this.totals = this.seoService.calculateTotals(currentData?.data, previousData?.data);
-    //     console.log(this.totals);
+    forkJoin([
+      this.seoService.fetchData(current.start, current.end),
+      this.seoService.fetchData(previous.start, previous.end)
+    ]).subscribe({
+      next: ([currentData, previousData]) => {
+        this.totals = this.seoService.calculateTotals(currentData?.data, previousData?.data);
+        console.log(this.totals);
         
-    //     this.currentTopPages = this.seoService.getTopPages(currentData.data);
-    //     this.loading = false;
-    //   },
-    //   error: (err) => {
-    //     this.error = 'Error loading data. Please check console for details.';
-    //     console.error('Error loading data:', err);
-    //     this.loading = false;
-    //   }
-    // });
+        this.currentPages = this.seoService.getTopPages(currentData.data);
+        this.previousPages = this.seoService.getTopPages(previousData.data);
+    
+        this.pages = this.seoService.transformAnalyticsData(currentData.data, previousData.data)
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Error loading data. Please check console for details.';
+        console.error('Error loading data:', err);
+        this.loading = false;
+      }
+    });
   
 
 
-    this.totals = this.seoService.calculateTotals(this.current?.data, this.pre?.data);
-    console.log(this.totals);
+    // this.totals = this.seoService.calculateTotals(this.current?.data, this.pre?.data);
+    // console.log(this.totals);
     
-    this.currentPages = this.seoService.getTopPages(this.current.data);
-    this.previousPages = this.seoService.getTopPages(this.current.data);
+    // this.currentPages = this.seoService.getTopPages(this.current.data);
+    // this.previousPages = this.seoService.getTopPages(this.current.data);
 
-    this.pages = this.seoService.transformAnalyticsData(this.current.data, this.pre.data)
-    this.loading = false;
+    // this.pages = this.seoService.transformAnalyticsData(this.current.data, this.pre.data)
+    // this.loading = false;
   
   }
 

@@ -1,45 +1,44 @@
-<div *ngIf="totals" class="grid grid-cols-2 md:grid-cols-4 gap-2 text-center pb-2 mb-3 bg-gray-100 text-gray-800">
-  <div class="p-3 rounded-lg bg-white">
-    <p class="font-semibold text-base md:text-lg">Impressions</p>
-    <p class="font-bold text-gray-800 text-base md:text-lg">
+
+
+<div class="average-count grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
+  <div>
+    <p class="text-red-600 font-semibold">Impressions</p>
+    <p class="font-bold text-gray-800 text-xs md:text-lg">
       <span [class]="getChange(totals.current.impressions, totals.previous.impressions).color">
         {{getChange(totals.current.impressions, totals.previous.impressions).arrow}}
       </span>
       {{formatValue(totals.current.impressions)}}
-      <span class="text-xs md:text-sm text-gray-500">(prev: {{formatValue(totals.previous.impressions)}})</span>
+      <span class="text-xs text-gray-500">(prev: {{formatValue(totals.previous.impressions)}})</span>
     </p>
   </div>
-
-  <div class="p-3 rounded-lg bg-white">
-    <p class="font-semibold text-base md:text-lg">Clicks</p>
-    <p class="font-bold text-gray-800 text-base md:text-lg">
+  <div>
+    <p class="text-green-600 font-semibold">Clicks</p>
+    <p class="font-bold text-gray-800 text-xs md:text-lg clc">
       <span [class]="getChange(totals.current.clicks, totals.previous.clicks).color">
         {{getChange(totals.current.clicks, totals.previous.clicks).arrow}}
       </span>
       {{formatValue(totals.current.clicks)}}
-      <span class="text-xs md:text-sm text-gray-500">(prev: {{formatValue(totals.previous.clicks)}})</span>
+      <span class="text-xs text-gray-500">(prev: {{formatValue(totals.previous.clicks)}})</span>
     </p>
   </div>
-
-  <div class="p-3 rounded-lg bg-white">
-    <p class="font-semibold text-base md:text-lg">Position</p>
-    <p class="font-bold text-gray-800 text-base md:text-lg">
+  <div>
+    <p class="text-blue-600 font-semibold">Position</p>
+    <p class="font-bold text-gray-800 text-xs md:text-lg pos">
       <span [class]="getChange(parseFloat(totals.current.avgPosition), parseFloat(totals.previous.avgPosition), true).color">
         {{getChange(parseFloat(totals.current.avgPosition), parseFloat(totals.previous.avgPosition), true).arrow}}
       </span>
       {{formatValue(totals.current.avgPosition)}}
-      <span class="text-xs md:text-sm text-gray-500">(prev: {{formatValue(totals.previous.avgPosition)}})</span>
+      <span class="text-xs text-gray-500">(prev: {{formatValue(totals.previous.avgPosition)}})</span>
     </p>
   </div>
-
-  <div class="p-3 rounded-lg bg-white">
-    <p class="font-semibold text-base md:text-lg">CTR</p>
-    <p class="font-bold text-gray-800 text-base md:text-lg">
+  <div>
+    <p class="text-purple-600 font-semibold">CTR</p>
+    <p class="font-bold text-gray-800 text-xs md:text-lg ctr">
       <span [class]="getChange(parseFloat(totals.current.avgCtr), parseFloat(totals.previous.avgCtr)).color">
         {{getChange(parseFloat(totals.current.avgCtr), parseFloat(totals.previous.avgCtr)).arrow}}
       </span>
       {{formatValue(totals.current.avgCtr, true)}}
-      <span class="text-xs md:text-sm text-gray-500">(prev: {{formatValue(totals.previous.avgCtr, true)}})</span>
+      <span class="text-xs text-gray-500">(prev: {{formatValue(totals.previous.avgCtr, true)}})</span>
     </p>
   </div>
 </div>

@@ -12,41 +12,41 @@ export class SeoAnalyticsService {
 
   constructor(private http: HttpClient) { }
 
-  getDateRange(range: string): DateRangeData {
+  
+  getDateRange(range: string) {
     const today = new Date();
-    const offsetDate = new Date();
-    offsetDate.setDate(today.getDate() - 3); // 3 days ago (GSC delay)
+    const offsetDate = new Date(today);
+    offsetDate.setDate(today.getDate() - 4); // 4 days ago due to GSC delay
     offsetDate.setHours(0, 0, 0, 0);
-
+  
     const formatDate = (date: Date) => date.toISOString().split('T')[0];
-
-    switch (range) {
-      case 'today':
+  
+    let result: DateRangeData;
+  
+    switch (range.toLowerCase()) {
+      case 'today': {
         const todayDate = new Date(offsetDate);
         const yesterday = new Date(offsetDate);
         yesterday.setDate(offsetDate.getDate() - 1);
-        return {
-          current: {
-            start: formatDate(todayDate),
-            end: formatDate(todayDate),
-          },
-          previous: {
-            start: formatDate(yesterday),
-            end: formatDate(yesterday),
-          },
+  
+        result = {
+          current: { start: formatDate(todayDate), end: formatDate(todayDate) },
+          previous: { start: formatDate(yesterday), end: formatDate(yesterday) },
         };
-
-      case 'lastWeek':
+        break;
+      }
+  
+      case 'last week': {
         const lastWeekEnd = new Date(offsetDate);
         const lastWeekStart = new Date(offsetDate);
         lastWeekStart.setDate(lastWeekEnd.getDate() - 6);
-
+  
         const secondLastWeekEnd = new Date(lastWeekStart);
         secondLastWeekEnd.setDate(lastWeekStart.getDate() - 1);
         const secondLastWeekStart = new Date(secondLastWeekEnd);
         secondLastWeekStart.setDate(secondLastWeekEnd.getDate() - 6);
-
-        return {
+  
+        result = {
           current: {
             start: formatDate(lastWeekStart),
             end: formatDate(lastWeekEnd),
@@ -56,45 +56,60 @@ export class SeoAnalyticsService {
             end: formatDate(secondLastWeekEnd),
           },
         };
-
-      case 'lastMonth':
-        const lastMonthEnd = new Date(offsetDate);
-        const lastMonthStart = new Date(lastMonthEnd);
-        lastMonthStart.setMonth(lastMonthEnd.getMonth() - 1);
-
-        const secondLastMonthEnd = new Date(lastMonthStart);
-        secondLastMonthEnd.setDate(0); // last day of previous month
-        const secondLastMonthStart = new Date(secondLastMonthEnd);
-        secondLastMonthStart.setMonth(secondLastMonthEnd.getMonth() - 1);
-        secondLastMonthStart.setDate(1); // first day of 2nd last month
-
-        return {
+        break;
+      }
+  
+      case 'last month': {
+        const currentMonthEnd = new Date(offsetDate);
+        currentMonthEnd.setDate(0); // last day of previous month
+  
+        const currentMonthStart = new Date(currentMonthEnd);
+        currentMonthStart.setDate(1); // first day of previous month
+  
+        const previousMonthEnd = new Date(currentMonthStart);
+        previousMonthEnd.setDate(0); // last day of 2nd last month
+  
+        const previousMonthStart = new Date(previousMonthEnd);
+        previousMonthStart.setDate(1); // first day of 2nd last month
+  
+        result = {
           current: {
-            start: formatDate(lastMonthStart),
-            end: formatDate(lastMonthEnd),
+            start: formatDate(currentMonthStart),
+            end: formatDate(currentMonthEnd),
           },
           previous: {
-            start: formatDate(secondLastMonthStart),
-            end: formatDate(secondLastMonthEnd),
+            start: formatDate(previousMonthStart),
+            end: formatDate(previousMonthEnd),
           },
         };
-
-      default:
-        return {
-          current: {
-            start: formatDate(offsetDate),
-            end: formatDate(offsetDate),
-          },
-          previous: {
-            start: formatDate(offsetDate),
-            end: formatDate(offsetDate),
-          },
+        break;
+      }
+  
+      default: {
+        result = {
+          current: { start: formatDate(offsetDate), end: formatDate(offsetDate) },
+          previous: { start: formatDate(offsetDate), end: formatDate(offsetDate) },
         };
+        break;
+      }
     }
+  
+    // Display the result
+    // console.log(`\n=== ${range.toUpperCase()} ===`);
+    // console.log("Current Period:");
+    // console.log(`Start: ${result.current.start}`);
+    // console.log(`End:   ${result.current.end}`);
+    // console.log("Previous Period:");
+    // console.log(`Start: ${result.previous.start}`);
+    // console.log(`End:   ${result.previous.end}`);
+  
+    return result;
   }
+  
+  
 
   fetchData(start: string, end: string): Observable<any> {
-    return this.http.get<QueryData[]>(`http://localhost/test/api.php?start=${start}&end=${end}`);
+    return this.http.get<QueryData[]>(`https://abafshipping.com/seo/test/api.php?start=${start}&end=${end}`);
   }
 
   calculateTotals(current: any[], prev: any[]): { current: Totals, previous: Totals } {

@@ -1,112 +1,108 @@
-<div class="keywords-table">
-    <!-- Header Row -->
+<div class="seo-data-table">
+    <!-- Table Header -->
     <div class="table-header">
-        <div class="page-col">Page</div>
-        <div class="metric-col">Impressions</div>
-        <div class="metric-col">Clicks</div>
-        <div class="metric-col">Position</div>
+        <div class="col-page">Page URL</div>
+        <div class="col-metric">Impressions</div>
+        <div class="col-metric">Clicks</div>
+        <div class="col-metric">Position</div>
     </div>
 
-    <!-- Data Rows -->
-    <ng-container *ngFor="let page of pages; let i = index">
-        <!-- Page Row -->
-        <div class="table-row" 
-             [class.active]="expandedPage === page.page"
-             (click)="togglePageExpansion(page.page)">
-            <div class="page-col">
-                <div class="page-name">{{formatUrl(page.page)}}</div>
-                <div class="prev-value">(Total keywords: {{page.queries.length || 0}})</div>
+    <!-- Table Rows -->
+    <div *ngFor="let page of pages" class="page-group" [class.expanded]="expandedPage === page.page">
+        <!-- Parent Row -->
+        <div class="parent-row" (click)="togglePageExpansion(page.page)" [class.active]="expandedPage === page.page">
+            <div class="col-page">
+                <span class="expand-icon">{{expandedPage === page.page ? '▼' : '▶'}}</span>
+                <span class="page-url">{{formatUrl(page.page)}}</span>
+                <span class="badge">{{page.queries.length}} keywords</span>
             </div>
-            
-            <div class="metric-col">
-                <div class="value">
-                    {{page.clicks}}
-                    <span *ngIf="page.clicksChange.includes('+') || page.clicksChange.includes('-')" 
-                          class="badge" 
-                          [ngClass]="{'up': page.clicksChange.includes('+'), 'down': page.clicksChange.includes('-')}">
-                        {{page.clicksChange.includes('+') ? '▲' : '▼'}} {{page.clicksChange.replace('+', '').replace('-', '')}}
+            <div class="col-metric">
+                <div class="metric-main">
+                    {{page.impressions | number}} <span
+                        *ngIf="page.impressionsChange.includes('+') || page.impressionsChange.includes('-')"
+                        class="badge"
+                        [ngClass]="{'up': page.impressionsChange.includes('+'), 'down': page.impressionsChange.includes('-')}">
+                        {{page.impressionsChange.includes('+') ? '▲' : '▼'}} {{page.impressionsChange.replace('+',
+                        '').replace('-', '')}}
                     </span>
                 </div>
-                <div class="prev-value">(Previous: {{page.previous.clicks}})</div>
+                <div class="metric-sub">Prev: {{page.previous.impressions | number}}</div>
             </div>
-            
-            <div class="metric-col">
-                <div class="value">
-                    {{page.impressions}}
-                    <span *ngIf="page.impressionsChange.includes('+') || page.impressionsChange.includes('-')" 
-                          class="badge" 
-                          [ngClass]="{'up': page.impressionsChange.includes('+'), 'down': page.impressionsChange.includes('-')}">
-                        {{page.impressionsChange.includes('+') ? '▲' : '▼'}} {{page.impressionsChange.replace('+', '').replace('-', '')}}
+            <div class="col-metric">
+                <div class="metric-main">
+                    {{page.clicks | number}} <span
+                        *ngIf="page.clicksChange.includes('+') || page.clicksChange.includes('-')" class="badge"
+                        [ngClass]="{'up': page.clicksChange.includes('+'), 'down': page.clicksChange.includes('-')}">
+                        {{page.clicksChange.includes('+') ? '▲' : '▼'}} {{page.clicksChange.replace('+',
+                        '').replace('-', '')}}
                     </span>
                 </div>
-                <div class="prev-value">(Previous: {{page.previous.impressions}})</div>
+                <div class="metric-sub">Prev: {{page.previous.clicks | number}}</div>
             </div>
-            
-            <div class="metric-col">
-                <div class="value">
-                    {{page.position}}
-                    <span *ngIf="page.positionChange.includes('+') || page.positionChange.includes('-')" 
-                          class="badge" 
-                          [ngClass]="{'up': page.positionChange.includes('-'), 'down': page.positionChange.includes('+')}">
-                        {{page.positionChange.includes('-') ? '▲' : '▼'}} {{page.positionChange.replace('+', '').replace('-', '')}}
+            <div class="col-metric">
+                <div class="metric-main">
+                    {{page.position | number:'1.1-1'}} <span
+                        *ngIf="page.positionChange.includes('+') || page.positionChange.includes('-')" class="badge"
+                        [ngClass]="{'up': page.positionChange.includes('-'), 'down': page.positionChange.includes('+')}">
+                        {{page.positionChange.includes('-') ? '▲' : '▼'}} {{page.positionChange.replace('+',
+                        '').replace('-', '')}}
                     </span>
                 </div>
-                <div class="prev-value">(Previous: {{page.previous.position}})</div>
+                <div class="metric-sub">Prev: {{page.previous.position | number:'1.1-1'}}</div>
             </div>
         </div>
 
-        <!-- Keyword Table (inserted right below the clicked row) -->
-        <div class="keyword-table-container" [class.expanded]="expandedPage === page.page">
-            <div class="keyword-table" *ngIf="expandedPage === page.page">
-                <!-- <div class="table-header">
-                    <div class="query-col">Keyword</div>
-                    <div class="metric-col">Impressions</div>
-                    <div class="metric-col">Clicks</div>
-                    <div class="metric-col">Position</div>
-                </div> -->
+        <!-- Child Rows -->
+        <div *ngIf="expandedPage === page.page" class="child-rows">
+            <div *ngFor="let query of page.queries" class="child-row">
+                <div class="col-page">
+                    <span>Keyword: </span>
+                    <span class="keyword-text"> {{query.query}}</span>
+                </div>
+                <div class="col-metric">
+                    <div>
+                        <div class="metric-main">
+                            {{query.impressions | number}}
+                            <span
+                                *ngIf="query.impressionsChange?.includes('+') || query.impressionsChange?.includes('-')"
+                                class="badge"
+                                [ngClass]="{'up': query.impressionsChange.includes('+'), 'down': query.impressionsChange.includes('-')}">
+                                {{query.impressionsChange.includes('+') ? '▲' : '▼'}}
+                                {{query.impressionsChange.replace('+', '').replace('-', '')}}
+                            </span>
+                        </div>
+                        <div *ngIf="query.previous" class="metric-sub">Prev: {{query.previous.impressions | number}}
+                        </div>
 
-                <div class="table-row" *ngFor="let query of page.queries">
-                    <div class="query-col">
-                        <div class="query-name">{{query.query}}</div>
                     </div>
-                    
-                    <div class="metric-col">
-                        <div class="value">
-                            {{query.impressions}}
-                            <span *ngIf="query.impressionsChange?.includes('+') || query.impressionsChange?.includes('-')" 
-                                  class="badge" 
-                                  [ngClass]="{'up': query.impressionsChange.includes('+'), 'down': query.impressionsChange.includes('-')}">
-                                {{query.impressionsChange.includes('+') ? '▲' : '▼'}} {{query.impressionsChange.replace('+', '').replace('-', '')}}
-                            </span>
-                        </div>
-                        <div class="prev-value" *ngIf="query.previous">(Previous: {{query.previous.impressions}})</div>
+                </div>
+                <div class="col-metric">
+                    <div class="metric-main">
+                        {{query.clicks | number}}
+                        <span *ngIf="query.clicksChange?.includes('+') || query.clicksChange?.includes('-')"
+                            class="badge"
+                            [ngClass]="{'up': query.clicksChange.includes('+'), 'down': query.clicksChange.includes('-')}">
+                            {{query.clicksChange.includes('+') ? '▲' : '▼'}} {{query.clicksChange.replace('+',
+                            '').replace('-', '')}}
+                        </span>
                     </div>
-                    
-                    <div class="metric-col">
-                        <div class="value">
-                            {{query.clicks}}
-                            <span *ngIf="query.clicksChange?.includes('+') || query.clicksChange?.includes('-')" 
-                                  class="badge" 
-                                  [ngClass]="{'up': query.clicksChange.includes('+'), 'down': query.clicksChange.includes('-')}">
-                                {{query.clicksChange.includes('+') ? '▲' : '▼'}} {{query.clicksChange.replace('+', '').replace('-', '')}}
-                            </span>
-                        </div>
-                        <div class="prev-value" *ngIf="query.previous">(Previous: {{query.previous.clicks}})</div>
+                    <div *ngIf="query.previous" class="metric-sub">Prev: {{query.previous.clicks | number}}</div>
+                </div>
+                <div class="col-metric">
+                    <div class="metric-main">
+                        {{query.position | number:'1.1-1'}}
+
+                        <span *ngIf="query.positionChange?.includes('+') || query.positionChange?.includes('-')"
+                            class="badge"
+                            [ngClass]="{'up': query.positionChange.includes('-'), 'down': query.positionChange.includes('+')}">
+                            {{query.positionChange.includes('-') ? '▲' : '▼'}} {{query.positionChange.replace('+',
+                            '').replace('-', '')}}
+                        </span>
                     </div>
-                    
-                    <div class="metric-col">
-                        <div class="value">
-                            {{query.position}}
-                            <span *ngIf="query.positionChange?.includes('+') || query.positionChange?.includes('-')" 
-                                  class="badge" 
-                                  [ngClass]="{'up': query.positionChange.includes('-'), 'down': query.positionChange.includes('+')}">
-                                {{query.positionChange.includes('-') ? '▲' : '▼'}} {{query.positionChange.replace('+', '').replace('-', '')}}
-                            </span>
-                        </div>
-                        <div class="prev-value" *ngIf="query.previous">(Previous: {{query.previous.position}})</div>
+                    <div *ngIf="query.previous" class="metric-sub">Prev: {{query.previous.position | number:'1.1-1'}}
                     </div>
                 </div>
             </div>
         </div>
-    </ng-container>
+    </div>
 </div>
